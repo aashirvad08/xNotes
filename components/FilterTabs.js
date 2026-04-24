@@ -7,7 +7,9 @@ const FILTER_OPTIONS = [
   { key: "pending", label: "Pending" },
 ];
 
-export default function FilterTabs({ activeFilter, onChange }) {
+export default function FilterTabs({ activeFilter, onChange, theme }) {
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.container}>
       {FILTER_OPTIONS.map((option) => {
@@ -27,31 +29,33 @@ export default function FilterTabs({ activeFilter, onChange }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    backgroundColor: "#161321",
-    borderWidth: 1,
-    borderColor: "#2B2540",
-    borderRadius: 18,
-    padding: 6,
-    marginBottom: 16,
-  },
-  tab: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 12,
-    borderRadius: 14,
-  },
-  activeTab: {
-    backgroundColor: "#7E22CE",
-  },
-  label: {
-    color: "#C4B5FD",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  activeLabel: {
-    color: "#FFFFFF",
-  },
-});
+function createStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      backgroundColor: theme.surface,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 18,
+      padding: 6,
+      marginBottom: 16,
+    },
+    tab: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 12,
+      borderRadius: 14,
+    },
+    activeTab: {
+      backgroundColor: theme.accent,
+    },
+    label: {
+      color: theme.accentText,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    activeLabel: {
+      color: "#FFFFFF",
+    },
+  });
+}

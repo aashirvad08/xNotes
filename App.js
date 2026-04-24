@@ -13,6 +13,7 @@ import FolderFormScreen from "./screens/FolderFormScreen";
 import { auth } from "./services/firebase";
 import { subscribeToTasks } from "./services/taskService";
 import { subscribeToFolders } from "./services/folderService";
+import { THEMES } from "./theme";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,13 @@ export default function App() {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [folders, setFolders] = useState([]);
+  const [themeName, setThemeName] = useState("dark");
+
+  const theme = THEMES[themeName];
+
+  function toggleTheme() {
+    setThemeName((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -58,8 +66,8 @@ export default function App() {
 
   if (isCheckingSession) {
     return (
-      <View style={styles.loaderContainer}>
-        <StatusBar style="dark" />
+      <View style={[styles.loaderContainer, { backgroundColor: theme.background }]}>
+        <StatusBar style={theme.statusBar} />
         <ActivityIndicator size="large" color="#A855F7" />
       </View>
     );
@@ -67,7 +75,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.statusBar} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
           <>
@@ -78,6 +86,9 @@ export default function App() {
                   user={user}
                   tasks={tasks}
                   folders={folders}
+                  theme={theme}
+                  themeName={themeName}
+                  toggleTheme={toggleTheme}
                 />
               )}
             </Stack.Screen>
@@ -87,6 +98,9 @@ export default function App() {
                   {...props}
                   user={user}
                   folders={folders}
+                  theme={theme}
+                  themeName={themeName}
+                  toggleTheme={toggleTheme}
                 />
               )}
             </Stack.Screen>
@@ -96,6 +110,9 @@ export default function App() {
                   {...props}
                   user={user}
                   tasks={tasks}
+                  theme={theme}
+                  themeName={themeName}
+                  toggleTheme={toggleTheme}
                 />
               )}
             </Stack.Screen>
@@ -103,11 +120,25 @@ export default function App() {
         ) : (
           <>
             <Stack.Screen name="Login">
-              {(props) => <LoginScreen {...props} onLogin={(nextUser) => setUser(nextUser)} />}
+              {(props) => (
+                <LoginScreen
+                  {...props}
+                  onLogin={(nextUser) => setUser(nextUser)}
+                  theme={theme}
+                  themeName={themeName}
+                  toggleTheme={toggleTheme}
+                />
+              )}
             </Stack.Screen>
             <Stack.Screen name="Register">
               {(props) => (
-                <RegisterScreen {...props} onRegister={(nextUser) => setUser(nextUser)} />
+                <RegisterScreen
+                  {...props}
+                  onRegister={(nextUser) => setUser(nextUser)}
+                  theme={theme}
+                  themeName={themeName}
+                  toggleTheme={toggleTheme}
+                />
               )}
             </Stack.Screen>
           </>

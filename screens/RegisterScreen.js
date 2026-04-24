@@ -11,12 +11,14 @@ import {
   View,
 } from "react-native";
 import { registerUser } from "../services/authService";
+import { getToggleLabel } from "../theme";
 
-export default function RegisterScreen({ navigation, onRegister }) {
+export default function RegisterScreen({ navigation, onRegister, theme, themeName, toggleTheme }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const styles = createStyles(theme);
 
   async function handleRegister() {
     if (!name.trim() || !email.trim() || !password.trim()) {
@@ -45,6 +47,12 @@ export default function RegisterScreen({ navigation, onRegister }) {
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
+        <View style={styles.topActions}>
+          <Pressable style={styles.themeButton} onPress={toggleTheme}>
+            <Text style={styles.themeButtonText}>{getToggleLabel(themeName)} Mode</Text>
+          </Pressable>
+        </View>
+
         <View style={styles.heroCard}>
           <Text style={styles.eyebrow}>Quick Demo Signup</Text>
           <Text style={styles.title}>Create your demo account</Text>
@@ -57,7 +65,7 @@ export default function RegisterScreen({ navigation, onRegister }) {
           <Text style={styles.label}>Name</Text>
           <TextInput
             placeholder="Enter your name"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={theme.textMuted}
             style={styles.input}
             value={name}
             onChangeText={setName}
@@ -66,7 +74,7 @@ export default function RegisterScreen({ navigation, onRegister }) {
           <Text style={styles.label}>Email</Text>
           <TextInput
             placeholder="Enter your email"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={theme.textMuted}
             style={styles.input}
             autoCapitalize="none"
             keyboardType="email-address"
@@ -77,7 +85,7 @@ export default function RegisterScreen({ navigation, onRegister }) {
           <Text style={styles.label}>Password</Text>
           <TextInput
             placeholder="Enter your password"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={theme.textMuted}
             style={styles.input}
             secureTextEntry
             value={password}
@@ -99,91 +107,112 @@ export default function RegisterScreen({ navigation, onRegister }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#09090F",
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 22,
-    paddingVertical: 28,
-    justifyContent: "center",
-  },
-  heroCard: {
-    marginBottom: 18,
-  },
-  eyebrow: {
-    color: "#A855F7",
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-    fontSize: 12,
-    fontWeight: "700",
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 32,
-    color: "#F5F3FF",
-    fontWeight: "800",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: "#A1A1AA",
-  },
-  formCard: {
-    backgroundColor: "#161321",
-    borderRadius: 24,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: "#2B2540",
-    shadowColor: "#000000",
-    shadowOpacity: 0.28,
-    shadowRadius: 16,
-    shadowOffset: {
-      width: 0,
-      height: 8,
+function createStyles(theme) {
+  return StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.background,
     },
-    elevation: 6,
-  },
-  label: {
-    color: "#DDD6FE",
-    fontSize: 14,
-    fontWeight: "700",
-    marginBottom: 8,
-    marginTop: 10,
-  },
-  input: {
-    backgroundColor: "#0F0B17",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#31284B",
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: "#F5F3FF",
-  },
-  button: {
-    backgroundColor: "#7E22CE",
-    borderRadius: 14,
-    alignItems: "center",
-    paddingVertical: 15,
-    marginTop: 22,
-    marginBottom: 18,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  footerText: {
-    textAlign: "center",
-    color: "#A1A1AA",
-    fontSize: 14,
-  },
-  link: {
-    color: "#C084FC",
-    fontWeight: "700",
-  },
-});
+    container: {
+      flex: 1,
+      paddingHorizontal: 22,
+      paddingVertical: 28,
+      justifyContent: "center",
+    },
+    topActions: {
+      position: "absolute",
+      top: 12,
+      right: 22,
+      zIndex: 1,
+    },
+    themeButton: {
+      backgroundColor: theme.surfaceStrong,
+      borderWidth: 1,
+      borderColor: theme.borderStrong,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 12,
+    },
+    themeButtonText: {
+      color: theme.accentText,
+      fontWeight: "700",
+      fontSize: 13,
+    },
+    heroCard: {
+      marginBottom: 18,
+    },
+    eyebrow: {
+      color: theme.accentBright,
+      textTransform: "uppercase",
+      letterSpacing: 1.2,
+      fontSize: 12,
+      fontWeight: "700",
+      marginBottom: 8,
+    },
+    title: {
+      fontSize: 32,
+      color: theme.textPrimary,
+      fontWeight: "800",
+      marginBottom: 10,
+    },
+    subtitle: {
+      fontSize: 15,
+      lineHeight: 22,
+      color: theme.textMuted,
+    },
+    formCard: {
+      backgroundColor: theme.surface,
+      borderRadius: 24,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: theme.border,
+      shadowColor: theme.shadow,
+      shadowOpacity: 0.28,
+      shadowRadius: 16,
+      shadowOffset: {
+        width: 0,
+        height: 8,
+      },
+      elevation: 6,
+    },
+    label: {
+      color: theme.textSecondary,
+      fontSize: 14,
+      fontWeight: "700",
+      marginBottom: 8,
+      marginTop: 10,
+    },
+    input: {
+      backgroundColor: theme.surfaceAlt,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: theme.borderStrong,
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+      fontSize: 15,
+      color: theme.textPrimary,
+    },
+    button: {
+      backgroundColor: theme.accent,
+      borderRadius: 14,
+      alignItems: "center",
+      paddingVertical: 15,
+      marginTop: 22,
+      marginBottom: 18,
+    },
+    buttonText: {
+      color: "#FFFFFF",
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    footerText: {
+      textAlign: "center",
+      color: theme.textMuted,
+      fontSize: 14,
+    },
+    link: {
+      color: theme.accentSoft,
+      fontWeight: "700",
+    },
+  });
+}

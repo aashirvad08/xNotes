@@ -12,13 +12,9 @@ import {
   View,
 } from "react-native";
 import { saveFolder } from "../services/folderService";
+import { getToggleLabel, PRIORITY_COLORS } from "../theme";
 
 const PRIORITY_OPTIONS = ["High", "Medium", "Low"];
-const PRIORITY_COLORS = {
-  High: "#DC2626",
-  Medium: "#D97706",
-  Low: "#15803D",
-};
 
 function getFolderPriorityPreview(folder, tasks) {
   if (folder.priorityMode === "manual") {
@@ -59,8 +55,17 @@ function showError(title, message, error) {
   Alert.alert(title, message);
 }
 
-export default function FolderFormScreen({ navigation, route, user, tasks }) {
+export default function FolderFormScreen({
+  navigation,
+  route,
+  user,
+  tasks,
+  theme,
+  themeName,
+  toggleTheme,
+}) {
   const existingFolder = route.params?.folder;
+  const styles = createStyles(theme);
   const [name, setName] = useState(existingFolder?.name || "");
   const [priorityMode, setPriorityMode] = useState(existingFolder?.priorityMode || "auto");
   const [manualPriority, setManualPriority] = useState(existingFolder?.manualPriority || "Medium");
@@ -113,16 +118,21 @@ export default function FolderFormScreen({ navigation, route, user, tasks }) {
                 task priorities inside it.
               </Text>
             </View>
-            <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-              <Text style={styles.backButtonText}>Back</Text>
-            </Pressable>
+            <View style={styles.headerActions}>
+              <Pressable style={styles.themeButton} onPress={toggleTheme}>
+                <Text style={styles.themeButtonText}>{getToggleLabel(themeName)} Mode</Text>
+              </Pressable>
+              <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Text style={styles.backButtonText}>Back</Text>
+              </Pressable>
+            </View>
           </View>
 
           <View style={styles.formCard}>
             <Text style={styles.label}>Folder name</Text>
             <TextInput
               placeholder="Example: Placement Prep"
-              placeholderTextColor="#94A3B8"
+              placeholderTextColor={theme.textMuted}
               style={styles.input}
               value={name}
               onChangeText={setName}
@@ -220,144 +230,163 @@ export default function FolderFormScreen({ navigation, route, user, tasks }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#09090F",
-  },
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 18,
-  },
-  headerTextWrapper: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  title: {
-    color: "#F5F3FF",
-    fontSize: 30,
-    fontWeight: "800",
-    marginBottom: 8,
-  },
-  subtitle: {
-    color: "#A1A1AA",
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  backButton: {
-    backgroundColor: "#1B1529",
-    borderWidth: 1,
-    borderColor: "#34274E",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  backButtonText: {
-    color: "#E9D5FF",
-    fontWeight: "700",
-  },
-  formCard: {
-    backgroundColor: "#161321",
-    borderRadius: 24,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: "#2B2540",
-  },
-  label: {
-    color: "#DDD6FE",
-    fontSize: 14,
-    fontWeight: "700",
-    marginBottom: 8,
-    marginTop: 10,
-  },
-  input: {
-    backgroundColor: "#0F0B17",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#31284B",
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: "#F5F3FF",
-  },
-  modeRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  modeOption: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#34274E",
-    paddingVertical: 14,
-    backgroundColor: "#120F1B",
-  },
-  modeOptionSelected: {
-    backgroundColor: "#7E22CE",
-    borderColor: "#7E22CE",
-  },
-  modeOptionText: {
-    color: "#DDD6FE",
-    fontWeight: "700",
-  },
-  modeOptionTextSelected: {
-    color: "#FFFFFF",
-  },
-  priorityRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  priorityOption: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#34274E",
-    paddingVertical: 14,
-    backgroundColor: "#120F1B",
-  },
-  priorityOptionText: {
-    color: "#DDD6FE",
-    fontWeight: "700",
-  },
-  priorityOptionTextSelected: {
-    color: "#FFFFFF",
-  },
-  previewCard: {
-    borderRadius: 16,
-    padding: 16,
-  },
-  previewPriority: {
-    fontSize: 18,
-    fontWeight: "800",
-    marginBottom: 6,
-  },
-  previewNote: {
-    color: "#B3AEC2",
-    lineHeight: 20,
-  },
-  saveButton: {
-    backgroundColor: "#7E22CE",
-    borderRadius: 14,
-    alignItems: "center",
-    paddingVertical: 15,
-    marginTop: 24,
-  },
-  saveButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-});
+function createStyles(theme) {
+  return StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    container: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+    },
+    headerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: 18,
+    },
+    headerTextWrapper: {
+      flex: 1,
+      paddingRight: 12,
+    },
+    headerActions: {
+      alignItems: "flex-end",
+      gap: 10,
+    },
+    title: {
+      color: theme.textPrimary,
+      fontSize: 30,
+      fontWeight: "800",
+      marginBottom: 8,
+    },
+    subtitle: {
+      color: theme.textMuted,
+      fontSize: 15,
+      lineHeight: 22,
+    },
+    themeButton: {
+      backgroundColor: theme.surfaceStrong,
+      borderWidth: 1,
+      borderColor: theme.borderStrong,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 12,
+    },
+    themeButtonText: {
+      color: theme.accentText,
+      fontWeight: "700",
+      fontSize: 13,
+    },
+    backButton: {
+      backgroundColor: theme.surfaceStrong,
+      borderWidth: 1,
+      borderColor: theme.borderStrong,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 12,
+    },
+    backButtonText: {
+      color: theme.accentText,
+      fontWeight: "700",
+    },
+    formCard: {
+      backgroundColor: theme.surface,
+      borderRadius: 24,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: theme.border,
+    },
+    label: {
+      color: theme.textSecondary,
+      fontSize: 14,
+      fontWeight: "700",
+      marginBottom: 8,
+      marginTop: 10,
+    },
+    input: {
+      backgroundColor: theme.surfaceAlt,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: theme.borderStrong,
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+      fontSize: 15,
+      color: theme.textPrimary,
+    },
+    modeRow: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    modeOption: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: theme.borderStrong,
+      paddingVertical: 14,
+      backgroundColor: theme.surfaceAlt,
+    },
+    modeOptionSelected: {
+      backgroundColor: theme.accent,
+      borderColor: theme.accent,
+    },
+    modeOptionText: {
+      color: theme.textSecondary,
+      fontWeight: "700",
+    },
+    modeOptionTextSelected: {
+      color: "#FFFFFF",
+    },
+    priorityRow: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    priorityOption: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: theme.borderStrong,
+      paddingVertical: 14,
+      backgroundColor: theme.surfaceAlt,
+    },
+    priorityOptionText: {
+      color: theme.textSecondary,
+      fontWeight: "700",
+    },
+    priorityOptionTextSelected: {
+      color: "#FFFFFF",
+    },
+    previewCard: {
+      borderRadius: 16,
+      padding: 16,
+    },
+    previewPriority: {
+      fontSize: 18,
+      fontWeight: "800",
+      marginBottom: 6,
+    },
+    previewNote: {
+      color: theme.textSoft,
+      lineHeight: 20,
+    },
+    saveButton: {
+      backgroundColor: theme.accent,
+      borderRadius: 14,
+      alignItems: "center",
+      paddingVertical: 15,
+      marginTop: 24,
+    },
+    saveButtonText: {
+      color: "#FFFFFF",
+      fontSize: 16,
+      fontWeight: "700",
+    },
+  });
+}
